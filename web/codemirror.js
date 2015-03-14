@@ -11742,10 +11742,10 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
   "use strict";
 
   var keywords = ("this super static final const abstract class extends external factory " +
-    "implements get native operator set typedef with enum throw rethrow " +
-    "assert break case continue default in return new deferred async await " +
-    "try catch finally do else for if switch while import library export " +
-    "part of show hide is").split(" ");
+  "implements get native operator set typedef with enum throw rethrow " +
+  "assert break case continue default in return new deferred async await " +
+  "try catch finally do else for if switch while import library export " +
+  "part of show hide is").split(" ");
   var blockKeywords = "try catch finally do else for if switch while".split(" ");
   var atoms = "true false null".split(" ");
   var builtins = "void bool num int double dynamic var".split(" ");
@@ -11770,9 +11770,9 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
         "implements get native operator set typedef with enum throw rethrow " +
         "assert break case continue default in return new deferred async await " +
         "try catch finally do else for if switch while import library export " +
-        "part of show hide is");
+        "part of show hide is as");
     var blockKeywords = words("try catch finally do else for if switch while");
-    var atoms = words("null true false this");
+    var atoms = words("null true false");
 
     var builtins = words("void bool num int double dynamic var");
     var curPunc;
@@ -11801,16 +11801,20 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
           return tokenComment(stream, state);
         }
         if (stream.eat("/")) {
+          if (stream.eat('/')) {
+            stream.skipToEnd();
+            return "doc";
+          }
           stream.skipToEnd();
           return "comment";
         }
-        if (expectExpression(state.lastToken)) {
-          return startString(ch, stream, state);
-        }
+        //if (expectExpression(state.lastToken)) {
+        //  return startString(ch, stream, state);
+        //}
       }
       if (ch == "=" && stream.eat(">")) {
         curPunc = "=>";
-        return null;
+        return "dart-arrow";
       }
       if (/[+\-*&%=<>!?|\/~]/.test(ch)) {
         stream.eatWhile(/[+\-*&%=<>|~]/);
@@ -11838,19 +11842,23 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     tokenBase.isBase = true;
 
     function startString(quote, stream, state) {
+
       var tripleQuoted = false;
-      //if (quote != "/" && stream.eat(quote)) {
-      //  if (stream.eat(quote)) tripleQuoted = true;
-      //  else return "string";
-      //}
+      if (stream.eat(quote)) {
+        if (stream.eat(quote)) tripleQuoted = true;
+        //else return "string";
+      }
       function t(stream, state) {
         var escaped = false, next, end = !tripleQuoted;
+
         while ((next = stream.next()) != null) {
+
           if (next == quote && !escaped) {
             if (!tripleQuoted) { break; }
             if (stream.match(quote + quote)) { end = true; break; }
           }
           if ((quote == '"' || quote == "'") && next == "$" && !escaped && stream.eat("{")) {
+
             state.tokenize.push(tokenBaseUntilBrace());
             return "string";
           }
@@ -11882,7 +11890,12 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     }
 
     function tokenComment(stream, state) {
-      var maybeEnd = false, ch;
+      var maybeEnd = false, ch, style;
+      if (stream.peek() != "*") {
+        style = "comment";
+      } else {
+        style = "doc";
+      }
       while (ch = stream.next()) {
         if (ch == "/" && maybeEnd) {
           state.tokenize.pop();
@@ -11890,7 +11903,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
         }
         maybeEnd = (ch == "*");
       }
-      return "comment";
+      return style;
     }
 
     function expectExpression(last) {
@@ -11978,7 +11991,11 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
       },
 
       electricChars: "{}",
-      fold: "brace"
+      fold: "brace",
+      blockCommentStart: "/*",
+      blockCommentEnd: "*/",
+      lineComment: "//"
+
     };
   });
 
