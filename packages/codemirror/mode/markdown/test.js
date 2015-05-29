@@ -722,7 +722,6 @@
      "\\",
      "[em *foo*]");
 
-
   // Tests to make sure GFM-specific things aren't getting through
 
   MT("taskList",

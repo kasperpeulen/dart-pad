@@ -74,7 +74,6 @@
      '[keyword echo] [string "][variable-2 $]{[variable aaa][comment /*}?>*/][[','  [string "aaa][variable-2 $aaa][string {}][variable-2 $]{[variable aaa]}[string "]',']]}[string ->aaa.aaa"];',
      '[keyword echo] [string "][variable-2 $]{[variable aaa][comment /*} } $aaa } */]}[string ->aaa.aaa"];');
 
-
   function build_recursive_monsters(nt, t, n){
     var monsters = [t];
     for (var i = 1; i <= n; ++i)
