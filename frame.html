@@ -4,7 +4,13 @@
   	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title></title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
     <style>
+      body {
+        color: #ddd;
+        font-family: 'Roboto', sans-serif;
+        font-size: 12pt;
+      }
     </style>
     <script>
 replaceJavaScript = function(value) {
@@ -19,7 +25,7 @@ replaceJavaScript = function(value) {
   s.setAttribute('defer', 'true');
   s.text = value;
   document.head.appendChild(s);
-};
+}
 
 messageHandler = function(e) {
   // TODO: verify the domain is correct
@@ -42,7 +48,7 @@ messageHandler = function(e) {
       replaceJavaScript(obj.js);
     }, 150);
   }
-};
+}
 
 window.addEventListener('message', messageHandler, false);
 
@@ -50,9 +56,9 @@ parent.postMessage({'sender': 'frame', 'type': 'ready'}, '*');
     </script>
 
     <style id="styleId"></style>
+    </head><body><div id="scriptId" defer="true"></div>
+  
 
-  </head>
-  <body><div id="scriptId"></div>
 	
 	
 
